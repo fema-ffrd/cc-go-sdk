@@ -137,7 +137,14 @@ func connectStores(stores *[]DataStore) error {
 			if err != nil {
 				return err
 			}
-			(*stores)[i].Session = conn
+			// If Connect returns a nil session (e.g. for file/block stores that don't require
+			// an external connection), use the created instance itself as the session so
+			// the store's methods (Get/Put) are available through the Session value.
+			if conn == nil {
+				(*stores)[i].Session = newInstance
+			} else {
+				(*stores)[i].Session = conn
+			}
 		}
 	}
 	return nil
