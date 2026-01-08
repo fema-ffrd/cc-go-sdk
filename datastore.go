@@ -34,7 +34,7 @@ func registerStoreTypes() {
 
 type DataStore struct {
 	Name       string            `json:"name,omitempty" yaml:"name"`
-	ID         *uuid.UUID        `json:"id,omitempty" yaml:id omitempty`
+	ID         *uuid.UUID        `json:"id,omitempty" yaml:"id,omitempty"`
 	StoreType  StoreType         `json:"store_type,omitempty" yaml:"store_type"`
 	DsProfile  string            `json:"profile,omitempty" yaml:"profile"`
 	Parameters PayloadAttributes `json:"params,omitempty" yaml:"params"`
