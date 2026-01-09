@@ -4,8 +4,6 @@ go 1.22
 
 toolchain go1.23.4
 
-//replace github.com/usace-cloud-compute/filesapi => /workspaces/filesapi
-
 require (
 	github.com/TileDB-Inc/TileDB-Go v0.32.0
 	github.com/aws/aws-sdk-go-v2 v1.36.3
