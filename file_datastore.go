@@ -75,11 +75,20 @@ func (fds *FileDataStore[T]) Put(reader io.Reader, path string, destDataPath str
 		return int(n), err
 	}
 
+	dest := filepath.Clean(filepath.Join(fds.root, path))
+
+	// Create parent directories if needed
+	if _, ok := fds.fs.(*filestore.BlockFS); ok {
+		if err := os.MkdirAll(filepath.Dir(dest), 0755); err != nil {
+			return -1, err
+		}
+	}
+
 	poi := filestore.PutObjectInput{
 		Source: filestore.ObjectSource{
 			Reader: reader,
 		},
-		Dest: filestore.PathConfig{Path: fds.root + "/" + path},
+		Dest: filestore.PathConfig{Path: dest},
 	}
 	//@TODO fix the bytes transferred int
 	_, err := fds.fs.PutObject(poi)
