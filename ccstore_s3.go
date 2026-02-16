@@ -182,11 +182,20 @@ func BuildS3Config(profile string) filestore.S3FSConfig {
 	if profile == "" {
 		template = "%s%s"
 	}
-	awsconfig := filestore.S3FSConfig{
-		Credentials: filestore.S3FS_Static{
-			S3Id:  os.Getenv(fmt.Sprintf(template, profile, AwsAccessKeyId)),
-			S3Key: os.Getenv(fmt.Sprintf(template, profile, AwsSecretAccessKey)),
-		},
+	accessKeyId := os.Getenv(fmt.Sprintf(template, profile, AwsAccessKeyId))
+	secretAccessKey := os.Getenv(fmt.Sprintf(template, profile, AwsSecretAccessKey))
+	var creds any
+	if accessKeyId != "" {
+		creds = filestore.S3FS_Static{
+			S3Id:  accessKeyId,
+			S3Key: secretAccessKey,
+		}
+	} else {
+		// Use the AWS default credential provider chain
+		creds = filestore.S3FS_Attached{}
+	}
+	return filestore.S3FSConfig{
+		Credentials: creds,
 		S3Region:    os.Getenv(fmt.Sprintf(template, profile, AwsDefaultRegion)),
 		S3Bucket:    os.Getenv(fmt.Sprintf(template, profile, AwsS3Bucket)),
 		AltEndpoint: os.Getenv(fmt.Sprintf(template, profile, AwsS3Endpoint)),
@@ -196,5 +205,4 @@ func BuildS3Config(profile string) filestore.S3FSConfig {
 			}),
 		},
 	}
-	return awsconfig
 }
